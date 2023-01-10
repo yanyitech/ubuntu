@@ -1,0 +1,57 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Generate the SSH keys if non-existent
+
+if [ ! -e /var/lib/misc/firstrun ]; then
+dev=$(fdisk -l |grep -o  ""mmcblk."\|"sd."" |tail -1)
+echo $dev
+mnt_dev=$(findmnt -n -o SOURCE / | sed 's~\[.*\]~~')
+echo $mnt_dev
+lastsector=$(parted /dev/$dev unit s print -sm | awk -F':' 'NR==2{print $2}' | sed 's/s//')
+echo $lastsector
+firstsector=$(parted /dev/$dev unit s print -sm | awk -F':' 'NR==4{print $2}' | sed 's/s//')
+echo $firstsector
+{
+echo d; echo 2; echo n; echo p; echo 2; echo $firstsector; echo $(( $lastsector - 1 )); echo w; echo "quit"
+} | fdisk /dev/$dev
+resize2fs $mnt_dev
+touch /var/lib/misc/firstrun
+fi
+chmod 777 /dev/mpp_service
+chmod 777 /dev/rga
+chmod 777 /dev/dma_heap/ -R
+echo dec > /dev/video-dec0
+chmod 666 /dev/video-dec0
+echo enc > /dev/video-enc0
+chmod 666 /dev/video-enc0
+[ -e /lib/ld-linux-aarch64.so.1 -a ! -e /usr/lib64 ] && \
+		ln -s lib /usr/lib64
+dir="/sys/bus/sdio/devices/mmc1\:*\:1/modalias"
+res=$(cat $dir)
+wifi_id=$(expr substr "$res" 10 9)
+echo $wifi_id
+#AIC8800
+if [ $wifi_id = "5449d0145" ]
+then
+insmod /system/lib/modules/5.10.110/kernel/drivers/net/wireless/rockchip_wlan/aic8800/aic8800_bsp/aic8800_bsp.ko
+insmod /system/lib/modules/5.10.110/kernel/drivers/net/wireless/rockchip_wlan/aic8800/aic8800_fdrv/aic8800_fdrv.ko
+hciattach -n /dev/ttyS1 any 1500000 &
+#AP6256
+elif [ $wifi_id = "02D0dA9BF" ]
+then
+insmod /system/lib/modules/5.10.110/kernel/drivers/net/wireless/rockchip_wlan/rkwifi/bcmdhd/dhd_static_buf.ko
+insmod /system/lib/modules/5.10.110/kernel/drivers/net/wireless/rockchip_wlan/rkwifi/bcmdhd/bcmdhd.ko
+brcm_patchram_plus1 --enable_hci --no2bytes --tosleep 200000 --baudrate 1500000 --patchram /lib/firmware/BCM4343B0.hcd /dev/ttyS1 &
+fi
+exit 0
