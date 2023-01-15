@@ -16,8 +16,8 @@ echo "4.退出."
 read -p "请输入[1-4]:" key
 case $key in
 1)ROOTFS_VERSION="22.04";;
-2)ROOTFS_VERSION="20.04";;
-3)ROOTFS_VERSION="18.04";;
+2)ROOTFS_VERSION="20.04.5";;
+3)ROOTFS_VERSION="18.04.5";;
 4)exit
 esac
 ROOTFS_IMG_NEAM="$(date "+%Y%m%d")-ubuntu-${ROOTFS_VERSION}-preinstalled-desktop-arm64-coolpi.img"
