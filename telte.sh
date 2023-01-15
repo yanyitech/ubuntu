@@ -37,6 +37,7 @@ if [ -e ./source/$KERNEL_FOLDER_NEAM ]; then
 else
 	cd ./source
 	git clone $KERNEL_GIT_ADD
+	cd ../
 fi 
 echo "#####start build boot image#####"
 cd ./source/coolpi-kernel
@@ -58,7 +59,7 @@ apt-get update
 apt-get install apt-utils rsyslog dialog perl locales sudo systemd kmod pkg-config ifupdown net-tools ethtool udev wireless-tools iputils-ping resolvconf wget  wpasupplicant nano vim sshfs openssh-server bash-completion  busybox netplan.io samba libdrm-dev wayland-protocols libwayland-dev libx11-xcb-dev  -y
 apt-get update
 apt-get install -f
-apt-get install ubuntu-desktop -y
+apt-get install ubuntu-desktop -y 
 apt-get install mpv -y
 apt-get remove totem -y
 apt-get autoremove -y
