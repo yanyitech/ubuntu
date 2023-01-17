@@ -93,7 +93,7 @@ sudo partx -a -v ./output/$ROOTFS_IMG_NEAM
 sudo mkfs.vfat /dev/"loop"${LOOP_NUMBER}"p1"
 echo 'yes\n' | sudo mkfs.ext4 /dev/loop${LOOP_NUMBER}p2
 sudo dd if=./source/coolpi-kernel/coolpi-boot.img of=/dev/loop${LOOP_NUMBER}p1
-sudo rm -rf ./rootfs/* -R
+sudo rm -rf ./rootfs/ -R
 sudo mkdir ./rootfs
 sudo mount /dev/loop${LOOP_NUMBER}p2 ./rootfs
 sudo cp -rfp ./temp/* ./rootfs -R
