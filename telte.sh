@@ -12,8 +12,8 @@ echo "welcome coolpi-4b ubuntu image make"
 echo "1.ubuntu22.04 desktop"
 echo "2.ubuntu20.04 desktop"
 echo "3.ubuntu18.04 desktop"
-echo "4.退出."
-read -p "请输入[1-4]:" key
+echo "4.Quit."
+read -p "Input[1-4]:" key
 case $key in
 1)ROOTFS_VERSION="22.04";;
 2)ROOTFS_VERSION="20.04.5";;
