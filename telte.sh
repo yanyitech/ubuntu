@@ -32,11 +32,14 @@ sudo tar -xpf ./source/ubuntu-base-$ROOTFS_VERSION-base-arm64.tar.gz -C $TARGET_
 echo "#####start download kernel source code#####" 
 if [ -e ./source/$KERNEL_FOLDER_NEAM ]; then
 	cd ./source/coolpi-kernel
+	git fetch --all
+	git pull
 	git checkout $KERNEL_BRANCH_NEAM
 	cd ../../
 else
 	cd ./source
 	git clone $KERNEL_GIT_ADD
+	git checkout $KERNEL_BRANCH_NEAM
 	cd ../
 fi 
 echo "#####start build boot image#####"
@@ -56,19 +59,20 @@ echo Ubuntu > /etc/hostname
 echo 127.0.0.1 localhost > /etc/hosts
 echo 127.0.0.1 Ubuntu >> /etc/hosts
 apt-get update
-apt-get install apt-utils rsyslog dialog perl locales sudo systemd kmod pkg-config ifupdown net-tools ethtool udev wireless-tools iputils-ping resolvconf wget  wpasupplicant nano vim sshfs openssh-server bash-completion  busybox netplan.io samba libdrm-dev wayland-protocols libwayland-dev libx11-xcb-dev  -y
+apt-get install apt-utils rsyslog dialog perl locales sudo systemd kmod pkg-config ifupdown net-tools ethtool udev wireless-tools iputils-ping resolvconf wget  wpasupplicant nano vim sshfs bash-completion  busybox netplan.io samba libdrm-dev wayland-protocols libwayland-dev libx11-xcb-dev  -y
 apt-get update
 apt-get install -f
 apt-get install ubuntu-desktop -y 
-apt-get install mpv -y
 apt-get remove totem -y
-apt-get autoremove -y
+apt-get install mpv gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 apt-get update
 apt-get upgrade -y
-add-apt-repository ppa:liujianfeng1994/panfork-mesa
-add-apt-repository ppa:liujianfeng1994/rockchip-multimedia
+add-apt-repository ppa:george-coolpi/mali-g610
+add-apt-repository ppa:george-coolpi/multimedia
 apt update
+apt-get install librga-dev librga2 camera-engine-rkaiq gstreamer1.0-rockchip1 qv4l2 -y
 apt dist-upgrade -y
+apt-get autoremove -y
 exit
 EOF
 sudo umount ./$TARGET_ROOTFS_DIR/dev
@@ -85,22 +89,20 @@ dd if=/dev/zero of=./output/$ROOTFS_IMG_NEAM bs=1M count=$ROOTFS_IMG_SIZE
 echo "#####start parted#####"
 printf 'n\np\n1\n32768\n1081343\nn\np\n2\n1081344\n16777215\nw\n' | fdisk ./output/$ROOTFS_IMG_NEAM
 printf 't\n1\n0b\nw\n' | fdisk ./output/$ROOTFS_IMG_NEAM
-LOOP_NUMBER=$(lsblk |grep -o  "loop.." |awk  '{print $1}'|tail -2| grep -o '[[:digit:]]\+')
-echo LOOP_NUMBER=$LOOP_NUMBER
-LOOP_NUMBER=$[$LOOP_NUMBER+1] 
+LOOP_NUMBER=$(sudo losetup -f)
 echo LOOP_NUMBER=$LOOP_NUMBER
 sudo partx -a -v ./output/$ROOTFS_IMG_NEAM
-sudo mkfs.vfat /dev/"loop"${LOOP_NUMBER}"p1"
-echo 'yes\n' | sudo mkfs.ext4 /dev/loop${LOOP_NUMBER}p2
-sudo dd if=./source/coolpi-kernel/coolpi-boot.img of=/dev/loop${LOOP_NUMBER}p1
+sudo mkfs.vfat $LOOP_NUMBER"p1"
+echo 'yes\n' | sudo mkfs.ext4 $LOOP_NUMBER"p2"
+sudo dd if=./source/coolpi-kernel/coolpi-boot.img of=$LOOP_NUMBER"p1"
 sudo rm -rf ./rootfs/ -R
 sudo mkdir ./rootfs
-sudo mount /dev/loop${LOOP_NUMBER}p2 ./rootfs
+sudo mount $LOOP_NUMBER"p2" ./rootfs
 sudo cp -rfp ./temp/* ./rootfs -R
 sudo umount ./rootfs
-sudo e2fsck  -p -f /dev/loop${LOOP_NUMBER}p2
-sudo resize2fs -M /dev/loop${LOOP_NUMBER}p2
-sudo e2label /dev/loop${LOOP_NUMBER}p2 writable
-sudo losetup -d /dev/loop${LOOP_NUMBER}
+sudo e2fsck  -p -f $LOOP_NUMBER"p2"
+sudo resize2fs -M $LOOP_NUMBER"p2"
+sudo e2label $LOOP_NUMBER"p2" writable
+sudo losetup -d $LOOP_NUMBER
 fdisk -l ./output/$ROOTFS_IMG_NEAM
 echo "#####ubuntu img creat ok#####"
