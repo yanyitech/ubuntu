@@ -26,6 +26,8 @@ echo $firstsector
 echo d; echo 2; echo n; echo p; echo 2; echo $firstsector; echo $(( $lastsector - 1 )); echo w; echo "quit"
 } | fdisk /dev/$dev
 resize2fs $mnt_dev
+mkdir -p /boot/firmware
+echo "${mnt_dev%?}"1" /boot/firmware vfat defaults 0 1" | sudo tee /etc/fstab
 touch /var/lib/misc/firstrun
 fi
 chmod 777 /dev/mpp_service
