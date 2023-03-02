@@ -9,6 +9,17 @@ if [ -e $TARGET_ROOTFS_DIR ]; then
 	sudo rm -rf $TARGET_ROOTFS_DIR -R
 fi
 echo "welcome coolpi-4b ubuntu image make"
+echo "Please select a board"
+echo "1.cp4b"
+echo "2.cpcm5"
+echo "3.exit"
+read -p "请输入[1-3]:" key
+case $key in
+1)BOARD_NEME="cp4b";;
+2)BOARD_NEME="cpcm5-8uart";;
+3)exit
+esac
+echo "Please select a ubuntu version"
 echo "1.ubuntu22.04 desktop"
 echo "2.ubuntu20.04 desktop"
 echo "3.ubuntu18.04 desktop"
@@ -39,13 +50,14 @@ if [ -e ./source/$KERNEL_FOLDER_NEAM ]; then
 else
 	cd ./source
 	git clone $KERNEL_GIT_ADD
+	cd ./coolpi-kernel
 	git checkout $KERNEL_BRANCH_NEAM
-	cd ../
+	cd ../../
 fi 
 echo "#####start build boot image#####"
 cd ./source/coolpi-kernel
-./build-kernel.sh
-sudo ./build-fatboot.sh
+sudo ./build-kernel.sh $BOARD_NEME
+sudo ./build-fatboot.sh 
 cd ../../
 echo "#####copy resolv.conf#####"
 sudo cp -b /etc/resolv.conf temp/etc/
@@ -80,6 +92,7 @@ sudo umount ./$TARGET_ROOTFS_DIR/proc
 echo -e "network:\n  ethernets:\n    eth0:\n      dhcp4: yes\n      dhcp6: yes\n    eth1:\n      dhcp4: yes\n      dhcp6: yes\n  version: 2\n  renderer: NetworkManager" | sudo tee $TARGET_ROOTFS_DIR/etc/netplan/01-network-manager-all.yaml
 sudo cp -rfp ./bin/gpu/mali_csffw.bin ./$TARGET_ROOTFS_DIR/lib/firmware/
 sudo cp -rfp ./bin/init/rc.local  ./$TARGET_ROOTFS_DIR/etc/
+sudo cp -rfp ./bin/init/gst.sh  ./$TARGET_ROOTFS_DIR/etc/profile.d/
 sudo cp -rfp ./bin/wifi/ap6256/brcm_patchram_plus1  ./$TARGET_ROOTFS_DIR/usr/bin/
 sudo tar -zxvf ./bin/wifi/aic8800/aic8800.tar.gz -C ./$TARGET_ROOTFS_DIR/lib/firmware/
 sudo tar -zxvf ./bin/wifi/ap6256/ap6256.tar.gz -C ./$TARGET_ROOTFS_DIR/lib/firmware/
