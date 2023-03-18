@@ -79,12 +79,12 @@ apt-get remove totem -y
 apt-get install mpv gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 apt-get update
 apt-get upgrade -y
-add-apt-repository ppa:george-coolpi/mali-g610
 add-apt-repository ppa:george-coolpi/multimedia
 apt update
 apt-get install librga-dev librga2 camera-engine-rkaiq gstreamer1.0-rockchip1 qv4l2 -y
 apt dist-upgrade -y
 apt-get autoremove -y
+add-apt-repository ppa:george-coolpi/mali-g610
 exit
 EOF
 sudo umount ./$TARGET_ROOTFS_DIR/dev

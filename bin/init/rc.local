@@ -30,6 +30,10 @@ mkdir -p /boot/firmware
 echo "${mnt_dev%?}"1" /boot/firmware vfat defaults 0 1" | sudo tee /etc/fstab
 touch /var/lib/misc/firstrun
 fi
+echo performance > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
+echo performance > /sys/devices/system/cpu/cpufreq/policy1/scaling_governor
+echo performance > /sys/devices/system/cpu/cpufreq/policy3/scaling_governor
+echo performance > /sys/devices/platform/fb000000.gpu/devfreq/fb000000.gpu/governor
 chmod 777 /dev/mpp_service
 chmod 777 /dev/rga
 chmod 777 /dev/dma_heap/ -R
