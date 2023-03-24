@@ -11,13 +11,15 @@ fi
 echo "welcome coolpi-4b ubuntu image make"
 echo "Please select a board"
 echo "1.cp4b"
-echo "2.cpcm5"
-echo "3.exit"
+echo "2.cm5-evb"
+echo "3.cm5-8uart"
+echo "4.exit"
 read -p "请输入[1-3]:" key
 case $key in
 1)BOARD_NEME="cp4b";;
-2)BOARD_NEME="cpcm5-8uart";;
-3)exit
+2)BOARD_NEME="cm5-evb";;
+3)BOARD_NEME="cm5-8uart";;
+4)exit
 esac
 echo "Please select a ubuntu version"
 echo "1.ubuntu22.04 desktop"
@@ -31,7 +33,7 @@ case $key in
 3)ROOTFS_VERSION="18.04.5";;
 4)exit
 esac
-ROOTFS_IMG_NEAM="$(date "+%Y%m%d")-ubuntu-${ROOTFS_VERSION}-preinstalled-desktop-arm64-coolpi.img"
+ROOTFS_IMG_NEAM="$(date "+%Y%m%d")-ubuntu-${ROOTFS_VERSION}-preinstalled-desktop-arm64-${BOARD_NEME}.img"
 echo $ROOTFS_IMG_NEAM
 echo "#####start download base package#####"  
 if [ ! -e ./source/ubuntu-base-$ROOTFS_VERSION-base-arm64.tar.gz ]; then
@@ -79,12 +81,12 @@ apt-get remove totem -y
 apt-get install mpv gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 apt-get update
 apt-get upgrade -y
+add-apt-repository ppa:george-coolpi/mali-g610
 add-apt-repository ppa:george-coolpi/multimedia
 apt update
 apt-get install librga-dev librga2 camera-engine-rkaiq gstreamer1.0-rockchip1 qv4l2 -y
 apt dist-upgrade -y
 apt-get autoremove -y
-add-apt-repository ppa:george-coolpi/mali-g610
 exit
 EOF
 sudo umount ./$TARGET_ROOTFS_DIR/dev
