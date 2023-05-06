@@ -4,6 +4,7 @@ KERNEL_FOLDER_NEAM="coolpi-kernel"
 KERNEL_BRANCH_NEAM="develop"
 ROOTFS_IMG_SIZE=8192
 KERNEL_GIT_ADD="https://github.com/yanyitech/coolpi-kernel.git"
+FIRMWARE_GIT_ADD="git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git"
 export LC_ALL="C"
 if [ -e $TARGET_ROOTFS_DIR ]; then
 	sudo rm -rf $TARGET_ROOTFS_DIR -R
@@ -17,21 +18,23 @@ echo "4.exit"
 read -p "请输入[1-3]:" key
 case $key in
 1)BOARD_NEME="cp4b";;
-2)BOARD_NEME="cm5-evb";;
+2)BOARD_NEME="cm5-evb-v11";;
 3)BOARD_NEME="cm5-8uart";;
 4)exit
 esac
 echo "Please select a ubuntu version"
-echo "1.ubuntu22.04 desktop"
-echo "2.ubuntu20.04 desktop"
-echo "3.ubuntu18.04 desktop"
-echo "4.退出."
-read -p "请输入[1-4]:" key
+echo "1.ubuntu23.04 desktop"
+echo "2.ubuntu22.04 desktop"
+echo "3.ubuntu20.04 desktop"
+echo "4.ubuntu18.04 desktop"
+echo "5.退出."
+read -p "请输入[1-5]:" key
 case $key in
-1)ROOTFS_VERSION="22.04";;
-2)ROOTFS_VERSION="20.04.5";;
-3)ROOTFS_VERSION="18.04.5";;
-4)exit
+1)ROOTFS_VERSION="23.04";;
+2)ROOTFS_VERSION="22.04";;
+3)ROOTFS_VERSION="20.04.5";;
+4)ROOTFS_VERSION="18.04.5";;
+5)exit
 esac
 ROOTFS_IMG_NEAM="$(date "+%Y%m%d")-ubuntu-${ROOTFS_VERSION}-preinstalled-desktop-arm64-${BOARD_NEME}.img"
 echo $ROOTFS_IMG_NEAM
@@ -45,15 +48,25 @@ sudo tar -xpf ./source/ubuntu-base-$ROOTFS_VERSION-base-arm64.tar.gz -C $TARGET_
 echo "#####start download kernel source code#####" 
 if [ -e ./source/$KERNEL_FOLDER_NEAM ]; then
 	cd ./source/coolpi-kernel
-	git fetch --all
-	git pull
-	git checkout $KERNEL_BRANCH_NEAM
+	git pull origin develop
 	cd ../../
 else
 	cd ./source
 	git clone $KERNEL_GIT_ADD
 	cd ./coolpi-kernel
 	git checkout $KERNEL_BRANCH_NEAM
+	cd ../../
+fi 
+echo "#####start download linux firmware#####" 
+if [ -e ./source/linux-firmware ]; then
+	cd ./source/linux-firmware
+	git fetch --all
+	git pull
+	cd ../../
+else
+	cd ./source
+	git clone $FIRMWARE_GIT_ADD
+	cd ./linux-firmware
 	cd ../../
 fi 
 echo "#####start build boot image#####"
@@ -80,11 +93,6 @@ apt-get install ubuntu-desktop -y
 apt-get remove totem -y
 apt-get install mpv gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 apt-get update
-apt-get upgrade -y
-add-apt-repository ppa:george-coolpi/mali-g610
-add-apt-repository ppa:george-coolpi/multimedia
-apt update
-apt-get install librga-dev librga2 camera-engine-rkaiq gstreamer1.0-rockchip1 qv4l2 -y
 apt dist-upgrade -y
 apt-get autoremove -y
 exit
@@ -93,6 +101,8 @@ sudo umount ./$TARGET_ROOTFS_DIR/dev
 sudo umount ./$TARGET_ROOTFS_DIR/proc
 echo -e "network:\n  ethernets:\n    eth0:\n      dhcp4: yes\n      dhcp6: yes\n    eth1:\n      dhcp4: yes\n      dhcp6: yes\n  version: 2\n  renderer: NetworkManager" | sudo tee $TARGET_ROOTFS_DIR/etc/netplan/01-network-manager-all.yaml
 sudo cp -rfp ./bin/gpu/mali_csffw.bin ./$TARGET_ROOTFS_DIR/lib/firmware/
+sudo cp -rfp ./source/linux-firmware/iwlwifi* ./$TARGET_ROOTFS_DIR/lib/firmware/
+sudo cp -rfp ./source/linux-firmware/intel ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
 sudo cp -rfp ./bin/init/rc.local  ./$TARGET_ROOTFS_DIR/etc/
 sudo cp -rfp ./bin/init/gst.sh  ./$TARGET_ROOTFS_DIR/etc/profile.d/
 sudo cp -rfp ./bin/wifi/ap6256/brcm_patchram_plus1  ./$TARGET_ROOTFS_DIR/usr/bin/
