@@ -83,6 +83,8 @@ sudo mount -o bind /proc $TARGET_ROOTFS_DIR/proc
 echo "#####start chroot#####"
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR
 echo Ubuntu > /etc/hostname
+useradd -G sudo -m -s /bin/bash coolpi
+echo coolpi:123 | chpasswd
 echo 127.0.0.1 localhost > /etc/hosts
 echo 127.0.0.1 Ubuntu >> /etc/hosts
 apt-get update
