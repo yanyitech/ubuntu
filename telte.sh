@@ -93,7 +93,10 @@ apt-get update
 apt-get install -f
 apt-get install ubuntu-desktop -y 
 apt-get remove totem -y
-apt-get install mpv gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+add-apt-repository ppa:george-coolpi/mali-g610
+add-apt-repository ppa:george-coolpi/multimedia
+add-apt-repository ppa:george-coolpi/rknpu
+apt-get install mpv rknpu2 camera-engine-rkaiq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
 apt-get update
 apt dist-upgrade -y
 apt-get autoremove -y
