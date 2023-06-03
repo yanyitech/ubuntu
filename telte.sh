@@ -96,7 +96,7 @@ apt-get remove totem -y
 add-apt-repository ppa:george-coolpi/mali-g610
 add-apt-repository ppa:george-coolpi/multimedia
 add-apt-repository ppa:george-coolpi/rknpu
-apt-get install mpv rknpu2 camera-engine-rkaiq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly -y
+apt-get install mpv qv4l2 camera-engine-rkaiq gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-rockchip rknpu2 -y
 apt-get update
 apt dist-upgrade -y
 apt-get autoremove -y
@@ -108,6 +108,10 @@ echo -e "network:\n  ethernets:\n    eth0:\n      dhcp4: yes\n      dhcp6: yes\n
 sudo cp -rfp ./bin/gpu/mali_csffw.bin ./$TARGET_ROOTFS_DIR/lib/firmware/
 sudo cp -rfp ./source/linux-firmware/iwlwifi* ./$TARGET_ROOTFS_DIR/lib/firmware/
 sudo cp -rfp ./source/linux-firmware/intel ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
+sudo cp -rfp ./source/linux-firmware/rtl_bt ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
+sudo cp -rfp ./source/linux-firmware/rtlwifi ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
+sudo cp -rfp ./source/linux-firmware/rtw88 ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
+sudo cp -rfp ./source/linux-firmware/rtw89 ./$TARGET_ROOTFS_DIR/lib/firmware/ -R
 sudo cp -rfp ./bin/init/rc.local  ./$TARGET_ROOTFS_DIR/etc/
 sudo cp -rfp ./bin/init/gst.sh  ./$TARGET_ROOTFS_DIR/etc/profile.d/
 sudo cp -rfp ./bin/wifi/ap6256/brcm_patchram_plus1  ./$TARGET_ROOTFS_DIR/usr/bin/
