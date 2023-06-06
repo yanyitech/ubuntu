@@ -14,13 +14,15 @@ echo "Please select a board"
 echo "1.cp4b"
 echo "2.cm5-evb"
 echo "3.cm5-8uart"
-echo "4.exit"
+echo "4.cm5-minipc"
+echo "5.exit"
 read -p "请输入[1-3]:" key
 case $key in
 1)BOARD_NEME="cp4b";;
 2)BOARD_NEME="cm5-evb-v11";;
 3)BOARD_NEME="cm5-8uart";;
-4)exit
+4)BOARD_NEME="cm5-minipc";;
+5)exit
 esac
 echo "Please select a ubuntu version"
 echo "1.ubuntu23.04 desktop"
