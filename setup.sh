@@ -1,34 +1,169 @@
 #!/bin/bash
+#support: www.cool-pi.com
 
-#sudo apt-get install binfmt-support qemu-user-static wget
+#sudo apt install binfmt-support qemu-user-static debootstrap wget
 
 TOPDIR=`pwd`
 
 clear
 echo "***************************************************"
 cat << EOF
-Select Ubuntu Version:
-    1. Ubuntu20.04 32bit armhf
-    2. Ubuntu20.04 64bit arm64
-    3. Quit
+Select Ubuntu or Debian Version:
+    1. Ubuntu18.04 32bit armhf
+    2. Ubuntu18.04 64bit arm64
+    3. Ubuntu20.04 32bit armhf
+    4. Ubuntu20.04 64bit arm64
+    5. Ubuntu22.04 32bit armhf
+    6. Ubuntu22.04 64bit arm64
+    7. Ubuntu23.04 32bit armhf
+    8. Ubuntu23.04 64bit arm64
+    9. Debian12 32bit armhf
+   10. Debian12 64bit arm64
+   11. Debian11 32bit armhf
+   12. Debian11 64bit arm64
+   13. Debian10 32bit armhf
+   14. Debian10 64bit arm64
+   q. Quit
 EOF
-read -r -p "Which Version select[1-3]: " opt
+read -r -p "Which version select[1-14]: " opt
 case $opt in
 1)
     export ARCH="armhf"
-    export VER_UBUNTU="20.04.5"
-    export VER_UBUNTU_SUM="16aacbdc2700bb3a9eceb2bb04668a7a"
+    export VER_UBUNTU="18.04.5"
+    export VER_SUM="09730a1dfe882f6e81c983d3deb10a9a"
     export QEMU_BIN="/usr/bin/qemu-arm-static"
-    export VER_CODE="focal"
+    export VER_CODE="bionic"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
     ;;
 2)
     export ARCH="arm64"
-    export VER_UBUNTU="20.04.5"
-    export VER_UBUNTU_SUM="a207a1a6ecdaec5a165cbae3daac83a6"
+    export VER_UBUNTU="18.04.5"
+    export VER_SUM="5daeef877b716438584db842e49ff1e9"
     export QEMU_BIN="/usr/bin/qemu-aarch64-static"
-    export VER_CODE="focal"
+    export VER_CODE="bionic"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
     ;;
 3)
+    export ARCH="armhf"
+    export VER_UBUNTU="20.04.5"
+    export VER_SUM="16aacbdc2700bb3a9eceb2bb04668a7a"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_CODE="focal"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+4)
+    export ARCH="arm64"
+    export VER_UBUNTU="20.04.5"
+    export VER_SUM="a207a1a6ecdaec5a165cbae3daac83a6"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_CODE="focal"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+5)
+    export ARCH="armhf"
+    export VER_UBUNTU="22.04.2"
+    export VER_SUM="2b45cd48b94d3fe89624e4a4e238ef0f"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+6)
+    export ARCH="arm64"
+    export VER_UBUNTU="22.04.2"
+    export VER_SUM="ad795d8ef6da675ad7571e1b0d1c090a"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+7)
+    export ARCH="armhf"
+    export VER_UBUNTU="23.04"
+    export VER_SUM="f24f0fc28a8ca015d30203b34a60113a"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+8)
+    export ARCH="arm64"
+    export VER_UBUNTU="23.04"
+    export VER_SUM="00fb4cd923edf2b7efa18b038af0dc70"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_CODE="lunar"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+9)
+    export ARCH="armhf"
+    export VER_CODE="bookworm"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_DEBIAN="12"
+    export ROOTFS=$TOPDIR/rootfs_debian_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    #export MIRROR_SERVER="http://ftp.cn.debian.org/debian"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+10)
+    export ARCH="arm64"
+    export VER_CODE="bookworm"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_DEBIAN="12"
+    export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    #export MIRROR_SERVER="http://ftp.cn.debian.org/debian"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+11)
+    export ARCH="armhf"
+    export VER_CODE="bullseye"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_DEBIAN="11"
+    export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+12)
+    export ARCH="arm64"
+    export VER_CODE="bullseye"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_DEBIAN="11"
+    export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+13)
+    export ARCH="arm"
+    export VER_CODE="buster"
+    export QEMU_BIN="/usr/bin/qemu-arm-static"
+    export VER_DEBIAN="10"
+    export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+14)
+    export ARCH="arm64"
+    export VER_CODE="buster"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_DEBIAN="10"
+    export ROOTFS=$TOPDIR/rootfs_debian_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
+    export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+[qQ])
     exit 0
     ;;
 *)
@@ -58,9 +193,7 @@ case $opt in
 *)
     exit 1
 esac
-    
-export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
-
+ 
 trap step_exit INT
 
 step_exit()
@@ -70,12 +203,10 @@ step_exit()
     sudo umount -lf $ROOTFS/dev
     sudo umount $ROOTFS/sys
     sudo umount $ROOTFS/proc
-    if [ -f $ROOTFS/$QEMU_BIN ]; then
-        sudo rm $ROOTFS/$QEMU_BIN
+    if [ ! -z $QEMU_BIN ]; then
+        sudo rm -f $ROOTFS/$QEMU_BIN
     fi
-    if [ -f $ROOTFS/root/extra ]; then
-        sudo rm -rf $ROOTFS/root/extra
-    fi
+    sudo rm -rf $ROOTFS/root/extra
 
     read -r -p "Regenerate rootfs tarball?(Y/N)" opt
     case $opt in
@@ -93,8 +224,8 @@ step_exit()
     
     if [ $sel == "yes" ]; then
         cd $ROOTFS
-        sudo tar -czf ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz *
-        sudo mv -f ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz ../
+        sudo tar -czf ${CUSTOM_TAR} *
+        sudo mv -f ${CUSTOM_TAR} ../
     fi
 }
 
@@ -109,8 +240,9 @@ step_auto_install()
     HOME=/root sudo chroot $ROOTFS /bin/bash << "EOT"
     cd ~
 
-    apt-get update
-    apt install sudo
+    apt update
+    apt install -f -y
+    apt install -y sudo
    
     cat << EOF > /etc/apt/apt.conf.d/10periodic
 APT::Periodic::Update-Package-Lists "0";
@@ -140,27 +272,37 @@ EOT
 
 step_initial()
 {
-    if [ ! -f ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz ]; then
-        wget http://cdimage.ubuntu.com/ubuntu-base/releases/${VER_UBUNTU}/release/ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz
+    if [ -z ${VER_UBUNTU} ]; then
+        sudo rm -rf $ROOTFS
+	sudo qemu-debootstrap \
+            --arch="${ARCH}" \
+            --include="apt-transport-https,avahi-daemon,ca-certificates,curl,htop,locales,net-tools,openssh-server,usbutils" \
+            --exclude="debfoster" \
+            ${VER_CODE} \
+            ${ROOTFS} \
+            ${MIRROR_SERVER}
+    else
+        if [ ! -f ${DOWNLOAD_TAR} ]; then
+            wget http://cdimage.ubuntu.com/ubuntu-base/releases/${VER_UBUNTU}/release/${DOWNLOAD_TAR}
+        fi
+
+        check=`md5sum ${DOWNLOAD_TAR} |  awk '{print $1}'`
+        if [ x$check != x"${VER_SUM}" ]; then
+            echo "File check sum failed. Current file sum: [$check]"
+            exit 0
+        fi
+    
+        sudo rm -rf $ROOTFS
+        sudo mkdir -p $ROOTFS
+        sudo tar xpf ${DOWNLOAD_TAR} -C $ROOTFS
     fi
 
-    check=`md5sum ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz |  awk '{print $1}'`
-    if [ x$check != x"${VER_UBUNTU_SUM}" ]; then
-        echo "File check sum failed."
-        exit 0
-    fi
-
-    sudo rm -rf $ROOTFS
-    sudo mkdir -p $ROOTFS
-    sudo tar xpf ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz -C $ROOTFS
-    sudo ls -l $ROOTFS/etc/resolv.conf
     sudo cp /etc/resolv.conf $ROOTFS/etc/resolv.conf
 }
 
 step_custom_modify()
 {
     sudo cp /etc/resolv.conf $ROOTFS/etc/resolv.conf
-    
     sudo cp -a $QEMU_BIN $ROOTFS/usr/bin
     sudo mount -t proc proc $ROOTFS/proc
     sudo mount -t sysfs sysfs $ROOTFS/sys
