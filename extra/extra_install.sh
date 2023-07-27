@@ -25,8 +25,9 @@ if [ -f /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
 fi
 
 SYS_VER=`lsb_release -i | awk '{print $3}'`
-if [ "x$SYS_VER" = "xUbuntu" ]; then
-    echo "Ubuntu OS"
+ARCH_MAC=`uname -m`
+if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
+    echo "Ubuntu OS ARM64"
     echo -e '\n' | add-apt-repository ppa:george-coolpi/mali-g610
     echo -e '\n' | add-apt-repository ppa:george-coolpi/multimedia
     echo -e '\n' | add-apt-repository ppa:george-coolpi/rknpu
@@ -42,6 +43,13 @@ if [ "x$SYS_VER" = "xUbuntu" ]; then
     apt install -y gstreamer1.0-plugins-ugly
     apt install -y gstreamer1.0-rockchip
     apt install -y rknpu2
+fi
+
+if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xx86_64" ]; then
+    echo "Ubuntu OS X86_64"
+    #for compile u-boot
+    apt install -y gcc make device-tree-compiler python2
+    apt install -y git file
 fi
 
 if [ "x$SYS_VER" = "xDebian" ]; then

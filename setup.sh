@@ -23,6 +23,7 @@ Select Ubuntu or Debian Version:
    12. Debian11 64bit arm64
    13. Debian10 32bit armhf
    14. Debian10 64bit arm64
+   15. Ubuntu22.04 64bit amd64
    q. Quit
 EOF
 read -r -p "Which version select[1-14]: " opt
@@ -162,6 +163,16 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_debian_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    ;;
+15)
+    export ARCH="amd64"
+    export VER_UBUNTU="22.04.2"
+    export VER_SUM="1b1fa7f402ece1ead88a7bd406669be3"
+    export QEMU_BIN="/usr/bin/qemu-x86_64-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
     ;;
 [qQ])
     exit 0
