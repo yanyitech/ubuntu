@@ -24,9 +24,11 @@ Select Ubuntu or Debian Version:
    13. Debian10 32bit armhf
    14. Debian10 64bit arm64
    15. Ubuntu22.04 64bit amd64
+   16. Ubuntu20.04 64bit amd64
+   17. Ubuntu18.04 64bit amd64
    q. Quit
 EOF
-read -r -p "Which version select[1-14]: " opt
+read -r -p "Which version select[1-17]: " opt
 case $opt in
 1)
     export ARCH="armhf"
@@ -168,6 +170,26 @@ case $opt in
     export ARCH="amd64"
     export VER_UBUNTU="22.04.2"
     export VER_SUM="1b1fa7f402ece1ead88a7bd406669be3"
+    export QEMU_BIN="/usr/bin/qemu-x86_64-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+16)
+    export ARCH="amd64"
+    export VER_UBUNTU="20.04.5"
+    export VER_SUM="be0777779f01814b785ea7881f733719"
+    export QEMU_BIN="/usr/bin/qemu-x86_64-static"
+    export VER_CODE="jammy"
+    export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
+    export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
+    export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+17)
+    export ARCH="amd64"
+    export VER_UBUNTU="18.04.5"
+    export VER_SUM="43ebc182ae8174b006b42d4f14e480a9"
     export QEMU_BIN="/usr/bin/qemu-x86_64-static"
     export VER_CODE="jammy"
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
