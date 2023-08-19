@@ -1,0 +1,54 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Generate the SSH keys if non-existent
+
+if [ -e /usr/sbin/wifi_precfg ]; then
+    /usr/sbin/wifi_precfg &
+fi
+
+mkdir -p /boot/firmware
+mount LABEL="system-boot" /boot/firmware
+
+if [ -e /usr/sbin/part_resize ]; then
+    /usr/sbin/part_resize
+fi
+
+chmod 777 /dev/mpp_service
+chmod 777 /dev/rga
+chmod 777 /dev/dma_heap/ -R
+echo dec > /dev/video-dec0
+chmod 666 /dev/video-dec0
+echo enc > /dev/video-enc0
+chmod 666 /dev/video-enc0
+[ -e /lib/ld-linux-aarch64.so.1 -a ! -e /usr/lib64 ] && ln -s lib /usr/lib64
+
+dir="/sys/bus/sdio/devices/mmc1\:*\:1/modalias"
+if [ -f $dir ]; then
+    res=$(cat $dir)
+    wifi_id=$(expr substr "$res" 10 9)
+    echo $wifi_id
+    #AIC8800
+    if [ $wifi_id = "5449d0145" ]; then
+        hciattach -n /dev/ttyS1 any 1500000 &
+    #AP6256
+    elif [ $wifi_id = "02D0dA9BF" ]; then
+        brcm_patchram_plus1 --enable_hci --no2bytes --tosleep 200000 --baudrate 1500000 --patchram /lib/firmware/BCM4343B0.hcd /dev/ttyS1 &
+    fi
+fi
+
+if [ -e /usr/bin/restart_rknn.sh ]; then
+    /usr/bin/restart_rknn.sh
+fi
+
+exit 0

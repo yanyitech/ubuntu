@@ -26,9 +26,10 @@ Select Ubuntu or Debian Version:
    15. Ubuntu22.04 64bit amd64
    16. Ubuntu20.04 64bit amd64
    17. Ubuntu18.04 64bit amd64
+   18. Openkylin 64bit arm64
    q. Quit
 EOF
-read -r -p "Which version select[1-17]: " opt
+read -r -p "Which version select[1-18]: " opt
 case $opt in
 1)
     export ARCH="armhf"
@@ -95,7 +96,7 @@ case $opt in
     export VER_UBUNTU="23.04"
     export VER_SUM="f24f0fc28a8ca015d30203b34a60113a"
     export QEMU_BIN="/usr/bin/qemu-arm-static"
-    export VER_CODE="jammy"
+    export VER_CODE="lunar"
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
@@ -191,10 +192,19 @@ case $opt in
     export VER_UBUNTU="18.04.5"
     export VER_SUM="43ebc182ae8174b006b42d4f14e480a9"
     export QEMU_BIN="/usr/bin/qemu-x86_64-static"
-    export VER_CODE="jammy"
+    export VER_CODE="bionic"
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    ;;
+18)
+    export ARCH="arm64"
+    export VER_CODE="yangtze"
+    export QEMU_BIN="/usr/bin/qemu-aarch64-static"
+    export VER_OPENKYLIN="1.0"
+    export ROOTFS=$TOPDIR/rootfs_openkylin_${VER_CODE}_${ARCH}
+    export CUSTOM_TAR="openkylin-base-${VER_OPENKYLIN}-custom-${ARCH}.tar.gz"
+    export MIRROR_SERVER="http://archive.build.openkylin.top/openkylin"
     ;;
 [qQ])
     exit 0
@@ -305,7 +315,7 @@ EOT
 
 step_initial()
 {
-    if [ -z ${VER_UBUNTU} ]; then
+    if [ ! -z ${VER_DEBIAN} ]; then
         sudo rm -rf $ROOTFS
 	sudo qemu-debootstrap \
             --arch="${ARCH}" \
@@ -314,7 +324,20 @@ step_initial()
             ${VER_CODE} \
             ${ROOTFS} \
             ${MIRROR_SERVER}
-    else
+    fi
+
+    if [ ! -z ${VER_OPENKYLIN} ]; then
+        sudo rm -rf $ROOTFS
+	sudo ln -sf /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/yangtze
+        sudo qemu-debootstrap \
+            --arch="${ARCH}" \
+            --no-check-gpg --include="dosfstools,mtools,locales,fonts-noto-cjk,fonts-noto-mono,fonts-noto-cjk-extra,nano,network-manager" \
+            ${VER_CODE} \
+            ${ROOTFS} \
+            ${MIRROR_SERVER}
+    fi
+
+    if [ ! -z ${VER_UBUNTU} ]; then
         if [ ! -f ${DOWNLOAD_TAR} ]; then
             wget http://cdimage.ubuntu.com/ubuntu-base/releases/${VER_UBUNTU}/release/${DOWNLOAD_TAR}
         fi

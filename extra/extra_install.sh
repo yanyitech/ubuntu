@@ -8,26 +8,33 @@ apt install -y net-tools
 apt install -y iputils-ping 
 apt install -y network-manager
 apt install -y vim
+apt install -y gawk
 apt install -y openssh-server 
 apt install -y kmod
 apt install -y bluez-tools 
 apt install -y bluez
 apt install -y locales
 apt install -y curl wget
-apt install -y iperf
 apt install -y i2c-tools 
 apt install -y parted
 apt install -y dosfstools 
-apt install -y software-properties-common
 
 if [ -f /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
     cp 10-globally-managed-devices.conf /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
 fi
 
-SYS_VER=`lsb_release -i | awk '{print $3}'`
+if [ -d /lib/firmware ]; then
+    cp -a firmware-coolpi/* /lib/firmware/
+    sudo chown root:root /lib/firmware/ -R
+fi
+
+
+SYS_VER=`cat /etc/issue | awk '{print $1}'`
 ARCH_MAC=`uname -m`
 if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
     echo "Ubuntu OS ARM64"
+    apt install -y software-properties-common
+
     echo -e '\n' | add-apt-repository ppa:george-coolpi/mali-g610
     echo -e '\n' | add-apt-repository ppa:george-coolpi/multimedia
     echo -e '\n' | add-apt-repository ppa:george-coolpi/rknpu
@@ -43,6 +50,22 @@ if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
     apt install -y gstreamer1.0-plugins-ugly
     apt install -y gstreamer1.0-rockchip
     apt install -y rknpu2
+
+    apt install -y iperf iperf3
+
+    if [ ! -f /etc/rc.local ]; then
+        cp rc.local-ubuntu /etc/rc.local
+        sudo chown root:root /etc/rc.local
+        sudo systemctl enable rc-local
+    fi
+fi
+
+if [ "x$SYS_VER" = "xDebian" -a "x$ARCH_MAC" = "xaarch64" ]; then
+    echo "Debian OS ARM64"
+fi
+
+if [ "x$SYS_VER" = "xopenKylin" -a "x$ARCH_MAC" = "xaarch64" ]; then
+    echo "openKylin OS ARM64"
 fi
 
 if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xx86_64" ]; then
