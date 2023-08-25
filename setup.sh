@@ -1,7 +1,13 @@
 #!/bin/bash
 #support: www.cool-pi.com
 
-#sudo apt install binfmt-support qemu-user-static debootstrap wget
+for pkg in {binfmt-support,qemu-user-static,debootstrap,wget}
+do
+    dpkg-query -s $pkg > /dev/null 2>&1
+    if [[ ! $? -eq 0 ]]; then
+        sudo apt install -y $pkg
+    fi
+done
 
 TOPDIR=`pwd`
 
@@ -27,7 +33,7 @@ Select Ubuntu or Debian Version:
    16. Ubuntu20.04 64bit amd64
    17. Ubuntu18.04 64bit amd64
    18. Openkylin 64bit arm64
-   q. Quit
+   q.  Quit
 EOF
 read -r -p "Which version select[1-18]: " opt
 case $opt in

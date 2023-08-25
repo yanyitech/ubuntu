@@ -18,6 +18,7 @@ apt install -y curl wget
 apt install -y i2c-tools 
 apt install -y parted
 apt install -y dosfstools 
+apt install -y neofetch
 
 if [ -f /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
     cp 10-globally-managed-devices.conf /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
@@ -73,8 +74,4 @@ if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xx86_64" ]; then
     #for compile u-boot
     apt install -y gcc make device-tree-compiler python2
     apt install -y git file
-fi
-
-if [ "x$SYS_VER" = "xDebian" ]; then
-    echo "Debian OS"
 fi
