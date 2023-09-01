@@ -26,7 +26,7 @@ fi
 
 if [ -d /lib/firmware ]; then
     cp -a firmware-coolpi/* /lib/firmware/
-    sudo chown root:root /lib/firmware/ -R
+    chown root:root /lib/firmware/ -R
 fi
 
 
@@ -39,6 +39,10 @@ if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
     echo -e '\n' | add-apt-repository ppa:george-coolpi/mali-g610
     echo -e '\n' | add-apt-repository ppa:george-coolpi/multimedia
     echo -e '\n' | add-apt-repository ppa:george-coolpi/rknpu
+
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    echo "deb [arch=$(dpkg --print-architecture)] https://download.docker.com/linux/ubuntu \
+        $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     apt update
     apt install -y language-pack-en-base
@@ -59,6 +63,9 @@ if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
         sudo chown root:root /etc/rc.local
         sudo systemctl enable rc-local
     fi
+
+    apt install -y apt-transport-https ca-certificates gnupg-agent
+    apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 fi
 
 if [ "x$SYS_VER" = "xDebian" -a "x$ARCH_MAC" = "xaarch64" ]; then
