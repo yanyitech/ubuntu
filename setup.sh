@@ -12,6 +12,8 @@ done
 TOPDIR=`pwd`
 
 clear
+map_dev=`sudo losetup -f | cut -d / -f 3`
+
 echo "***************************************************"
 cat << EOF
 Select Ubuntu or Debian Version:
@@ -245,6 +247,17 @@ esac
  
 trap step_exit INT
 
+step_custom_img_uninit()
+{
+    if [ -e /dev/mapper/${map_dev}p1 ]; then
+        sudo umount $ROOTFS/boot/firmware
+        sudo umount $ROOTFS/
+        sudo kpartx -dv /dev/$map_dev
+        sudo losetup -d /dev/$map_dev
+        sync
+    fi
+}
+
 step_exit()
 {
     #logout
@@ -276,6 +289,8 @@ step_exit()
         sudo tar -czf ${CUSTOM_TAR} *
         sudo mv -f ${CUSTOM_TAR} ../
     fi
+
+    step_custom_img_uninit
 }
 
 step_auto_install()
@@ -319,8 +334,37 @@ EOT
 
 }
 
+step_custom_img_init()
+{
+    disk=coolpi-${ARCH}-${VER_CODE}.img
+    if [ ! -f $disk ]; then
+        sudo dd if=/dev/zero of=$disk bs=1M count=6000
+        sudo sgdisk --zap-all $disk
+        sudo sgdisk -n 0:0:+500MiB -t 0:0700 -c 0:system-boot $disk
+        sudo sgdisk -n 0:0:+5000MiB -t 0:a007 -c 0:writable $disk
+        sudo sgdisk -p $disk
+        sudo losetup /dev/$map_dev $disk
+        sudo kpartx -av /dev/$map_dev
+        sync
+        sudo mkfs.vfat -F 32 /dev/mapper/${map_dev}p1
+        sudo mkfs.ext4 /dev/mapper/${map_dev}p2
+        sudo kpartx -dv /dev/$map_dev
+        sudo losetup -d /dev/$map_dev
+    fi
+    map_dev=`sudo losetup -f | cut -d / -f 3`
+    sudo losetup /dev/$map_dev $disk
+    sudo kpartx -av /dev/$map_dev
+    sync
+    sudo mkdir -p $ROOTFS/
+    sudo mount /dev/mapper/${map_dev}p2 $ROOTFS
+    sudo mkdir -p $ROOTFS/boot/firmware
+    sudo mount /dev/mapper/${map_dev}p1 $ROOTFS/boot/firmware
+}
+
 step_initial()
 {
+    step_custom_img_init
+
     if [ ! -z ${VER_DEBIAN} ]; then
         sudo rm -rf $ROOTFS
 	sudo qemu-debootstrap \
@@ -364,6 +408,7 @@ step_initial()
 
 step_custom_modify()
 {
+    step_custom_img_init
     sudo cp /etc/resolv.conf $ROOTFS/etc/resolv.conf
     sudo cp -a $QEMU_BIN $ROOTFS/usr/bin
     sudo mount -t proc proc $ROOTFS/proc
@@ -372,6 +417,8 @@ step_custom_modify()
     sudo mount --bind /dev/pts $ROOTFS/dev/pts
     HOME=/root sudo chroot $ROOTFS /bin/bash --login -i
 }
+
+
 
 case "$OPS" in
   rebuild)
