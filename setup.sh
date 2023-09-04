@@ -1,7 +1,7 @@
 #!/bin/bash
 #support: www.cool-pi.com
 
-for pkg in {binfmt-support,qemu-user-static,debootstrap,wget}
+for pkg in {binfmt-support,qemu-user-static,debootstrap,wget,kpartx}
 do
     dpkg-query -s $pkg > /dev/null 2>&1
     if [[ ! $? -eq 0 ]]; then
@@ -12,8 +12,9 @@ done
 TOPDIR=`pwd`
 
 clear
-map_dev=`sudo losetup -f | cut -d / -f 3`
 
+echo "***************************************************"
+echo "https://www.cool-pi.com"
 echo "***************************************************"
 cat << EOF
 Select Ubuntu or Debian Version:
@@ -48,6 +49,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 2)
     export ARCH="arm64"
@@ -58,6 +60,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 3)
     export ARCH="armhf"
@@ -68,6 +71,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 4)
     export ARCH="arm64"
@@ -78,6 +82,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 5)
     export ARCH="armhf"
@@ -88,6 +93,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 6)
     export ARCH="arm64"
@@ -98,6 +104,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 7)
     export ARCH="armhf"
@@ -108,6 +115,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 8)
     export ARCH="arm64"
@@ -118,6 +126,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 9)
     export ARCH="armhf"
@@ -128,6 +137,7 @@ case $opt in
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     #export MIRROR_SERVER="http://ftp.cn.debian.org/debian"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 10)
     export ARCH="arm64"
@@ -138,6 +148,7 @@ case $opt in
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     #export MIRROR_SERVER="http://ftp.cn.debian.org/debian"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 11)
     export ARCH="armhf"
@@ -147,6 +158,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 12)
     export ARCH="arm64"
@@ -156,6 +168,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 13)
     export ARCH="arm"
@@ -165,6 +178,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_debian${VER_DEBIAN}_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 14)
     export ARCH="arm64"
@@ -174,6 +188,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_debian_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="debian-base-${VER_DEBIAN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="https://mirrors.ustc.edu.cn/debian"
+    export IMG_PRE="debian-"${VER_DEBIAN}
     ;;
 15)
     export ARCH="amd64"
@@ -184,6 +199,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 16)
     export ARCH="amd64"
@@ -194,6 +210,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 17)
     export ARCH="amd64"
@@ -204,6 +221,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_ubuntu_${VER_UBUNTU}_${ARCH}
     export DOWNLOAD_TAR="ubuntu-base-${VER_UBUNTU}-base-${ARCH}.tar.gz"
     export CUSTOM_TAR="ubuntu-base-${VER_UBUNTU}-custom-${ARCH}.tar.gz"
+    export IMG_PRE="ubuntu-"${VER_UBUNTU}
     ;;
 18)
     export ARCH="arm64"
@@ -213,6 +231,7 @@ case $opt in
     export ROOTFS=$TOPDIR/rootfs_openkylin_${VER_CODE}_${ARCH}
     export CUSTOM_TAR="openkylin-base-${VER_OPENKYLIN}-custom-${ARCH}.tar.gz"
     export MIRROR_SERVER="http://archive.build.openkylin.top/openkylin"
+    export IMG_PRE="openkylin-"${VER_OPENKYLIN}
     ;;
 [qQ])
     exit 0
@@ -249,9 +268,12 @@ trap step_exit INT
 
 step_custom_img_uninit()
 {
+    cd $TOPDIR
     if [ -e /dev/mapper/${map_dev}p1 ]; then
         sudo umount $ROOTFS/boot/firmware
         sudo umount $ROOTFS/
+        dnode=`mount | grep mapper | awk {'print $3'}`
+        sudo umount $dnode > /dev/null 2>&1
         sudo kpartx -dv /dev/$map_dev
         sudo losetup -d /dev/$map_dev
         sync
@@ -286,8 +308,7 @@ step_exit()
     
     if [ $sel == "yes" ]; then
         cd $ROOTFS
-        sudo tar -czf ${CUSTOM_TAR} *
-        sudo mv -f ${CUSTOM_TAR} ../
+        sudo tar -czf ../${CUSTOM_TAR} *
     fi
 
     step_custom_img_uninit
@@ -304,6 +325,8 @@ step_auto_install()
     HOME=/root sudo chroot $ROOTFS /bin/bash << "EOT"
     cd ~
 
+    cp /etc/apt/sources.list /etc/apt/sources.list_orig
+    sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
     apt update
     apt install -f -y
     apt install -y sudo
@@ -312,6 +335,11 @@ step_auto_install()
 APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
+EOF
+
+    cat << EOF > /etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "0";
+APT::Periodic::Unattended-Upgrade "0";
 EOF
 
     adduser -q --disabled-password --gecos "" coolpi
@@ -324,30 +352,105 @@ EOF
     cd /root/extra && ./extra_install.sh
     cd ~
 
-    apt-get clean
+    apt clean
+    mv /etc/apt/sources.list_orig /etc/apt/sources.list
     history -c
     if [ -f ~/.bash_history ]; then
         rm ~/.bash_history
     fi
 
 EOT
-
 }
 
 step_custom_img_init()
 {
-    disk=coolpi-${ARCH}-${VER_CODE}.img
+cat << EOF
+Select Board Type:
+    1. 4b
+    2. cm5 evb
+    3. cm5 minipc
+    4. cm5 notebook
+EOF
+read -r -p "Which board select[1-4]: " opt
+case $opt in
+1)
+    BOARD_NAME="4b"
+    DEB_KERNEL_H="linux-headers-5.10.110_4b_100_arm64.deb"
+    DEB_KERNEL_I="linux-image-5.10.110_4b_100_arm64.deb"
+    SUM_DEB_KERNEL_H="86a21b051459bd4707787bb41b518541"
+    SUM_DEB_KERNEL_I="83d3aef6df6ddaeaf6e3127d7c201560"
+    LINK_DEB_KERNEL_HEADER="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-headers-5.10.110_4b_100_arm64.deb"
+    LINK_DEB_KERNEL_IMAGE="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-image-5.10.110_4b_100_arm64.deb"
+    ;;
+2)
+    BOARD_NAME="cm5evb"
+    DEB_KERNEL_H="linux-headers-5.10.110_cm5evb_100_arm64.deb"
+    DEB_KERNEL_I="linux-image-5.10.110_cm5evb_100_arm64.deb"
+    SUM_DEB_KERNEL_H="ed83e40f512852d3304440be5b1fa1ad"
+    SUM_DEB_KERNEL_I="b2ccb94e58e5e6f6a4a3446d18680714"
+    LINK_DEB_KERNEL_HEADER="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-headers-5.10.110_cm5evb_100_arm64.deb"
+    LINK_DEB_KERNEL_IMAGE="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-image-5.10.110_cm5evb_100_arm64.deb"
+    ;;
+4)
+    BOARD_NAME="cm5notebook"
+    DEB_KERNEL_H="linux-headers-5.10.110_cm5notebook_100_arm64.deb"
+    DEB_KERNEL_I="linux-image-5.10.110_cm5notebook_100_arm64.deb"
+    SUM_DEB_KERNEL_H="213b7311281eb90ff0401cd79f55b0c5"
+    SUM_DEB_KERNEL_I="da7e8164ce0d93c1a3ef387254a9ce77"
+    LINK_DEB_KERNEL_HEADER="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-headers-5.10.110_cm5notebook_100_arm64.deb"
+    LINK_DEB_KERNEL_IMAGE="https://github.com/yanyitech/coolpi-kernel/releases/download/v1.0.0/linux-image-5.10.110_cm5notebook_100_arm64.deb"
+    ;;
+[qQ])
+    exit 0
+    ;;
+*)
+    echo "Invalid option. Exit Now."
+    exit 1
+    ;;
+esac
+
+    if [ ! -f ${DEB_KERNEL_H} ]; then
+        wget -cP ${TOPDIR} ${LINK_DEB_KERNEL_HEADER}
+    fi
+    if [ ! -f ${DEB_KERNEL_I} ]; then
+        wget -cP ${TOPDIR} ${LINK_DEB_KERNEL_IMAGE}
+    fi
+
+    check=`md5sum ${DEB_KERNEL_H} |  awk '{print $1}'`
+    if [ x$check != x"${SUM_DEB_KERNEL_H}" ]; then
+        echo "File check sum failed. Current file sum: [$check]"
+	mv ${DEB_KERNEL_H} ${DEB_KERNEL_H}_bad_sum
+        exit 0
+    fi
+    check=`md5sum ${DEB_KERNEL_I} |  awk '{print $1}'`
+    if [ x$check != x"${SUM_DEB_KERNEL_I}" ]; then
+        echo "File check sum failed. Current file sum: [$check]"
+	mv ${DEB_KERNEL_I} ${DEB_KERNEL_I}_bad_sum
+        exit 0
+    fi
+    rm -f ${TOPDIR}/extra/${DEB_KERNEL_H}
+    rm -f ${TOPDIR}/extra/${DEB_KERNEL_I}
+    rm -f ${TOPDIR}/extra/linux-*.deb
+    cp ${DEB_KERNEL_H} ${TOPDIR}/extra
+    cp ${DEB_KERNEL_I} ${TOPDIR}/extra
+
+    IMG_SIZE="8192"
+
+    map_dev=`sudo losetup -f | cut -d / -f 3`
+    disk=coolpi-${BOARD_NAME}-${ARCH}-${IMG_PRE}.img
     if [ ! -f $disk ]; then
-        sudo dd if=/dev/zero of=$disk bs=1M count=6000
+        sudo dd if=/dev/zero of=$disk bs=1M count=$IMG_SIZE
         sudo sgdisk --zap-all $disk
         sudo sgdisk -n 0:0:+500MiB -t 0:0700 -c 0:system-boot $disk
-        sudo sgdisk -n 0:0:+5000MiB -t 0:a007 -c 0:writable $disk
+        sudo sgdisk -n 0:0:+7500MiB -t 0:a007 -c 0:writable $disk
         sudo sgdisk -p $disk
         sudo losetup /dev/$map_dev $disk
         sudo kpartx -av /dev/$map_dev
         sync
         sudo mkfs.vfat -F 32 /dev/mapper/${map_dev}p1
         sudo mkfs.ext4 /dev/mapper/${map_dev}p2
+	sudo fatlabel /dev/mapper/${map_dev}p1 system-boot
+	sudo e2label /dev/mapper/${map_dev}p2 writable
         sudo kpartx -dv /dev/$map_dev
         sudo losetup -d /dev/$map_dev
     fi
@@ -366,7 +469,7 @@ step_initial()
     step_custom_img_init
 
     if [ ! -z ${VER_DEBIAN} ]; then
-        sudo rm -rf $ROOTFS
+        sudo rm -rf $ROOTFS > /dev/null 2>&1
 	sudo qemu-debootstrap \
             --arch="${ARCH}" \
             --include="apt-transport-https,avahi-daemon,ca-certificates,curl,htop,locales,net-tools,openssh-server,usbutils" \
@@ -377,7 +480,7 @@ step_initial()
     fi
 
     if [ ! -z ${VER_OPENKYLIN} ]; then
-        sudo rm -rf $ROOTFS
+        sudo rm -rf $ROOTFS > /dev/null 2>&1
 	sudo ln -sf /usr/share/debootstrap/scripts/gutsy /usr/share/debootstrap/scripts/yangtze
         sudo qemu-debootstrap \
             --arch="${ARCH}" \
@@ -398,7 +501,7 @@ step_initial()
             exit 0
         fi
     
-        sudo rm -rf $ROOTFS
+        sudo rm -rf $ROOTFS > /dev/null 2>&1
         sudo mkdir -p $ROOTFS
         sudo tar xpf ${DOWNLOAD_TAR} -C $ROOTFS
     fi

@@ -19,6 +19,9 @@ apt install -y i2c-tools
 apt install -y parted
 apt install -y dosfstools 
 apt install -y neofetch
+apt install -y binutils
+apt install -y zstd
+apt install -y xz-utils
 
 if [ -f /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf ]; then
     cp 10-globally-managed-devices.conf /usr/lib/NetworkManager/conf.d/10-globally-managed-devices.conf
@@ -29,11 +32,18 @@ if [ -d /lib/firmware ]; then
     chown root:root /lib/firmware/ -R
 fi
 
-
 SYS_VER=`cat /etc/issue | awk '{print $1}'`
 ARCH_MAC=`uname -m`
 if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
     echo "Ubuntu OS ARM64"
+    if [ -f linux-headers-5.10.110*.deb ]; then
+        dpkg -i linux-headers-5.10.110*.deb
+    fi
+
+    if [ -f linux-image-5.10.110*.deb ]; then
+        dpkg -i linux-image-5.10.110*.deb
+    fi
+
     apt install -y software-properties-common
 
     echo -e '\n' | add-apt-repository ppa:george-coolpi/mali-g610
@@ -70,6 +80,13 @@ fi
 
 if [ "x$SYS_VER" = "xDebian" -a "x$ARCH_MAC" = "xaarch64" ]; then
     echo "Debian OS ARM64"
+    if [ -f linux-headers-5.10.110*.deb ]; then
+        ./for_debian11_10_deb.sh /root/extra/ linux-headers-5.10.110*.deb
+    fi
+
+    if [ -f linux-image-5.10.110*.deb ]; then
+        ./for_debian11_10_deb.sh /root/extra/ linux-image-5.10.110*.deb
+    fi
 fi
 
 if [ "x$SYS_VER" = "xopenKylin" -a "x$ARCH_MAC" = "xaarch64" ]; then
