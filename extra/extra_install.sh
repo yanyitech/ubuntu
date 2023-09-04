@@ -68,6 +68,10 @@ if [ "x$SYS_VER" = "xUbuntu" -a "x$ARCH_MAC" = "xaarch64" ]; then
 
     apt install -y iperf iperf3
 
+    if [ -f part_resize ]; then
+        cp part_resize /usr/sbin/
+    fi
+
     if [ ! -f /etc/rc.local ]; then
         cp rc.local-ubuntu /etc/rc.local
         sudo chown root:root /etc/rc.local
